@@ -1,6 +1,7 @@
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 
+import javafx.event.EventHandler;
 import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.* ;
@@ -26,35 +27,57 @@ public class PlayGame extends Application{
     Card loneCard;
     Card selectedCard ;
 
+    EventHandler<MouseEvent> event = new EventHandler<MouseEvent>() {
+        public void handle(MouseEvent event) {
+            if (loneCard != null){
+                System.out.println("Lone Card is not equal to null. Here's its Rank: " + loneCard.rank + " and suit " + loneCard.suit);
+                loneCard.turnCardFaceUp();
+            }
+            else if(loneCard != null && loneCard.onTable(event.getSceneX(), event.getSceneX())) {
+                loneCard.turnCardFaceUp();
+                System.out.println("Hello World");
+            }
+            else
+                System.out.println("This is not working");
+        }
+    };
+
     public void start ( Stage stage ) throws FileNotFoundException {
         stage.setTitle( "The Game Of Castle" );
 
+        //Reads in the image file for the back of the card
         Images.faceDown = new Image(new FileInputStream(
                 "C:\\Users\\Queen\\IdeaProjects\\Castle\\cardBackArrows.png"),
                 100, 150, false, false);
 
+        //Reads in the image files for the front face of the card deck (TODO: Minus Joker Values))
         Images.faceUp= new HashMap<String, Image>() ;
         String[] wordsInFilePNGNames= { "hearts", "diamonds", "spades", "clubs"} ;
 
         for (int suitIndex = 0; suitIndex < 4; suitIndex++){
             for ( int cardRank = 2; cardRank < 15; cardRank ++){
-                //Files that contain card face images have formatted as such "2 of Hearts.png"
+                //NOTE: Files that contain card face images have formatted as such "2 of Hearts.png"
                 String PNGFileName = "C:\\Users\\Queen\\IdeaProjects\\Castle\\Playing Card PNGs\\" + cardRank + " of " + wordsInFilePNGNames[suitIndex] + ".png";
-                Image faceUpCards = new Image(new FileInputStream(PNGFileName));
+                Image faceUpCards = new Image(new FileInputStream(PNGFileName),100, 150, false, false);
                 String cardNames = wordsInFilePNGNames[suitIndex] + cardRank ;
                 Images.faceUp.put(cardNames, faceUpCards) ;
             }
         }
 
+        //Initializes card deck and two buttons, the deal and the shuffle button
         deck  =  new CardDeck() ;
         Button  dealButton   = new Button( "DEAL" );
         Button  shuffleButton = new Button( "SHUFFLE" );
+        Button  clearButton   = new Button( "CLEAR TABLE" );
+        Button  flipCards = new Button("FLIP CARDS");
 
+        //Assigns dealing action to the button
         dealButton.setOnAction((ActionEvent event) -> {
             if ( instructions != null ){
                 root.getChildren().remove( instructions );
                 instructions = null;
             }
+            //Empties the list 'inside' the Group
             rowOfCards.getChildren().clear();
 
             for (int cardIndex  =  0; cardIndex  <  5; cardIndex  ++){
@@ -69,14 +92,25 @@ public class PlayGame extends Application{
 
             loneCard = deck.getCard();
             loneCard.setCardPos( 188, 300 );
-
             groupOfLoneCards.getChildren().clear();
             groupOfLoneCards.getChildren().add(loneCard);
         });
+
+        //Assigns shuffle action to the button
         shuffleButton.setOnAction( (ActionEvent event) -> deck.shuffle());
 
+        //Assigns clear action to the button
+        clearButton.setOnAction((ActionEvent event) -> rowOfCards.getChildren().clear());
+
+        shuffleButton.setOnAction( (ActionEvent event) -> {
+            for (int cardIndex  =  0; cardIndex  <  5; cardIndex  ++) {
+                Card newCard = deck.getCard();
+            }
+        });
+
+
         HBox buttonHolder = new HBox(16);
-        buttonHolder.getChildren().addAll( dealButton, shuffleButton);
+        buttonHolder.getChildren().addAll( dealButton, shuffleButton, clearButton);
         buttonHolder.setAlignment( Pos.CENTER );
         buttonHolder.setPadding(new Insets( 0, 0, 20, 0 ));
 
@@ -93,14 +127,18 @@ public class PlayGame extends Application{
 
         Scene scene = new Scene(root, 910, 600 );
 
-        scene.setOnMouseClicked((MouseEvent event ) -> {
+        scene.addEventHandler(MouseEvent.MOUSE_CLICKED, event);
+
+
+        /*
+        scene.setOnMouseClicked((MouseEvent event) -> {
             double clickX = event.getSceneX();
             double clickY = event.getSceneY();
-            if (rowOfCards.getChildren().size() == 5){
-                for (Node cardNode : rowOfCards.getChildren()){
+            if (rowOfCards.getChildren().size() == 5){ // if there are 5 card members in Row Of Cards
+                for (Node cardNode : rowOfCards.getChildren()){ // For each member
                     Card cardInRow = (Card) cardNode;
                     if (cardInRow.onTable(clickX, clickY)){
-                        cardInRow.turnCardFaceDown();
+                        cardInRow.flipCard();
                         selectedCard = cardInRow;
                     }
                 }
@@ -108,6 +146,7 @@ public class PlayGame extends Application{
                     loneCard.turnCardFaceDown();
             }
         });
+        */
 
         Images.background  = new Image(new FileInputStream("C:\\Users\\Queen\\IdeaProjects\\Castle\\Green Background.jpg"));
         ImagePattern ImagePattern  = new ImagePattern(Images.background);
