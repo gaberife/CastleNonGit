@@ -34,18 +34,6 @@ public class Card extends ImageView{
          */
         setImage(Images.faceDown);
     }
-
-    //Sets card Image to  face down
-    public void turnCardFaceDown(){
-        setImage(Images.faceDown);
-    }
-
-    //Sets the cards position on the board
-    public void  setCardPos(double x, double y ){
-        setX(x);
-        setY(y);
-    }
-
     //Returns rank
     public int getRank(){
         return rank;
@@ -56,16 +44,25 @@ public class Card extends ImageView{
         return suit;
     }
 
-    public void setCardFaceDown(){
-        if (getImage() == CardFaceUp)
+    //Flips cards
+    public void flipCard(){
+        if(getImage() == CardFaceUp)
             setImage(Images.faceDown);
         else
             setImage(CardFaceUp);
     }
 
     //Sets card face up
-    public void setFaceUp(){
+    public void turnCardFaceUp(){
         setImage(CardFaceUp);
+    }
+
+    //Sets card face down
+    public void turnCardFaceDown(){
+        if (getImage() == CardFaceUp)
+            setImage(Images.faceDown);
+        else
+            setImage(CardFaceUp);
     }
 
     //Returns if card is face up
@@ -76,6 +73,12 @@ public class Card extends ImageView{
     //Returns if the card is face down
     public boolean isFaceDown(){
         return  (getImage() != CardFaceUp );
+    }
+
+    //Sets the cards position on the board
+    public void  setCardPos(double x, double y ){
+        setX(x);
+        setY(y);
     }
 
     //Returns Cards X Position
