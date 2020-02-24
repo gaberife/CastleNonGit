@@ -30,8 +30,24 @@ public class PlayGame extends Application{
     EventHandler<MouseEvent> event = new EventHandler<MouseEvent>() {
         public void handle(MouseEvent event) {
             if (loneCard != null){
-                System.out.println("Lone Card is not equal to null. Here's its Rank: " + loneCard.rank + " and suit " + loneCard.suit);
-                loneCard.turnCardFaceUp();
+                if(loneCard.suit == 4) {
+                    System.out.println("This card is a " + loneCard.rank + " of clubs.");
+                    loneCard.turnCardFaceUp();
+                }
+                if(loneCard.suit == 3) {
+                    System.out.println("This card is" +
+                            "" +
+                            " " + loneCard.rank + " of spades.");
+                    loneCard.turnCardFaceUp();
+                }
+                if(loneCard.suit == 2) {
+                    System.out.println("This card is " + loneCard.rank + " of diamonds");
+                    loneCard.turnCardFaceUp();
+                }
+                if(loneCard.suit == 1) {
+                    System.out.println("This card is " + loneCard.rank + " of hearts." );
+                    loneCard.turnCardFaceUp();
+                }
             }
             else if(loneCard != null && loneCard.onTable(event.getSceneX(), event.getSceneX())) {
                 loneCard.turnCardFaceUp();
